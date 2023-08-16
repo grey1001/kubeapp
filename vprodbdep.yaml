@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  vprodb
+  namespace: default
+  labels:
+    app:  vprodb
+spec:
+  selector:
+    matchLabels:
+      app: vprodb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  vprodb
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name:  vprodb
+        image:  greyabiwon/vprofiledb:latest
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: vpro-db-data
+        ports:
+        - containerPort:  3306
+          name:  vprodb-port
+        env:
+         - name: MYSQL_ROOT_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: app-secret
+               key: db-pass
+      nodeSelector: 
+        zone: eu-west-3a
+      volumes:
+        - name: vpro-db-data
+          awsElasticBlockStore:
+            volumeID: vol-021fa12f201876fca
+            fsType: ext4
+      initContainers: 
+        - name: busybox
+          image: busybox:latest
+          args: ["rm", "-rf", "/var/lib/mysql/lost+found"]
+          volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: vpro-db-data
+
+      restartPolicy: Always

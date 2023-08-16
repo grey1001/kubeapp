@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vproapp-service
+  namespace: default
+spec:
+  selector:
+    app: vproapp
+  type: LoadBalancer
+  ports:
+  - name: vproapp-port
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+    # If you set the `spec.type` field to `NodePort` and you want a specific port number,
+    # you can spLoadBalanceralue in the `spec.ports[*].nodePort` field.
