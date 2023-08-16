@@ -8,9 +8,8 @@ spec:
     app: vproapp
   type: LoadBalancer
   ports:
-  - name: vproapp-port
-    protocol: TCP
-    port: 80
-    targetPort: 80
+    - port: 80
+      protocol: TCP
+      targetPort: vproapp-port
     # If you set the `spec.type` field to `NodePort` and you want a specific port number,
     # you can spLoadBalanceralue in the `spec.ports[*].nodePort` field.
